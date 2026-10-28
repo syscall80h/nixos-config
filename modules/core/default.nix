@@ -13,6 +13,7 @@
 
   networking.hostName = hostname;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  system.nixos.distroName = "SilverOS";
 
   # Unfree packages allowed one by one (everything else stays refused).
   nixpkgs.config.allowUnfreePredicate =
