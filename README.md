@@ -44,7 +44,7 @@ The repo must be in `~/nixos-config` (otherwise, change `flakeDir` in
 `flake.nix`). A flake only sees files tracked by git: remember to
 `git add` every new file.
 
-## Installation on WSL (from your old configuration.nix)
+## Installation on WSL 
 
 ```sh
 git clone <your repo> ~/nixos-config      # or copy the folder, then:

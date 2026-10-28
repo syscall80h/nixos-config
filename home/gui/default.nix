@@ -2,7 +2,7 @@
 let
   # Image to put in the repo: wallpaper/unberry_ow.jpg (then git add).
   # While it is missing, hyprpaper stays disabled instead of breaking the build.
-  wallpaper = ../../wallpaper/unberry_ow.jpg;
+  wallpaper = ../../wallpaper/dfir-wallpaper.png;
 in
 {
   imports = [
