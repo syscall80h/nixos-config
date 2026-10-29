@@ -8,5 +8,8 @@
     ./forensics
   ]
   # Hyprland and the whole graphical environment: only if gui = true
-  ++ lib.optionals gui [ ./desktop ];
+  ++ lib.optionals gui [
+    ./desktop
+    ./virtualisation/libvirt.nix # not on WSL
+  ];
 }

@@ -2,13 +2,14 @@
 let
   # Image to put in the repo: wallpaper/unberry_ow.jpg (then git add).
   # While it is missing, hyprpaper stays disabled instead of breaking the build.
-  wallpaper = ../../wallpaper/dfir-wallpaper.png;
+  wallpaper = ../../wallpaper/unberry_ow.jpg;
 in
 {
   imports = [
     ./easyeffects.nix
     ./hyprland.nix
     ./quickshell
+    ./virt-manager.nix
   ];
 
   home.packages = with pkgs; [
