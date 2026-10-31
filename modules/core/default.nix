@@ -7,13 +7,13 @@
 
 {
   imports = [
+    ./keyboard.nix
     ./users.nix
     ./upgrade.nix
   ];
 
   networking.hostName = hostname;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  system.nixos.distroName = "SilverOS";
 
   # Unfree packages allowed one by one (everything else stays refused).
   nixpkgs.config.allowUnfreePredicate =
@@ -41,7 +41,6 @@
 
   time.timeZone = "Europe/Paris";
   i18n.defaultLocale = "fr_FR.UTF-8";
-  console.keyMap = "fr";
 
   # Allows running non-Nix binaries (wheels downloaded by uv/pip,
   # forensic tools distributed as binaries…).

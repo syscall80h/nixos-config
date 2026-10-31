@@ -17,6 +17,23 @@ let
       setxkbmap us
     fi
   '';
+
+  # Workspaces 1 to 6 on the physical keys of the number row (code:10 = 1 key):
+  # works on AZERTY (fr, be) and QWERTY (gb) without depending on the symbols.
+  workspaceBinds = lib.concatMap (i: [
+    {
+      _args = [
+        "SUPER + code:${toString (9 + i)}"
+        (lua "hl.dsp.focus({ workspace = ${toString i} })")
+      ];
+    }
+    {
+      _args = [
+        "SUPER + SHIFT + code:${toString (9 + i)}"
+        (lua "hl.dsp.window.move({ workspace = ${toString i} })")
+      ];
+    }
+  ]) (lib.range 1 6);
 in
 {
   wayland.windowManager.hyprland.settings = {
@@ -127,42 +144,6 @@ in
         ];
       }
 
-      {
-        _args = [
-          "SUPER + ampersand"
-          (lua "hl.dsp.focus({ workspace = 1 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + eacute"
-          (lua "hl.dsp.focus({ workspace = 2 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + quotedbl"
-          (lua "hl.dsp.focus({ workspace = 3 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + apostrophe"
-          (lua "hl.dsp.focus({ workspace = 4 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + parenleft"
-          (lua "hl.dsp.focus({ workspace = 5 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + minus"
-          (lua "hl.dsp.focus({ workspace = 6 })")
-        ];
-      }
 
       {
         _args = [
@@ -171,42 +152,6 @@ in
         ];
       }
 
-      {
-        _args = [
-          "SUPER + SHIFT + ampersand"
-          (lua "hl.dsp.window.move({ workspace = 1 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + SHIFT + eacute"
-          (lua "hl.dsp.window.move({ workspace = 2 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + SHIFT + quotedbl"
-          (lua "hl.dsp.window.move({ workspace = 3 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + SHIFT + apostrophe"
-          (lua "hl.dsp.window.move({ workspace = 4 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + SHIFT + parenleft"
-          (lua "hl.dsp.window.move({ workspace = 5 })")
-        ];
-      }
-      {
-        _args = [
-          "SUPER + SHIFT + minus"
-          (lua "hl.dsp.window.move({ workspace = 6 })")
-        ];
-      }
 
       {
         _args = [
@@ -332,6 +277,6 @@ in
           { locked = true; }
         ];
       }
-    ];
+    ] ++ workspaceBinds;
   };
 }

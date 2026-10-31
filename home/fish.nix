@@ -10,7 +10,9 @@
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
-      fastfetch
+      if not set -q IN_NIX_SHELL
+        fastfetch
+      end
     '';
     shellAliases = {
       # NixOS: `#${hostname}` makes the alias independent of the machine's current name
