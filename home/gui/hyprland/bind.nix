@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 # ----------------------------------------------------------------------
 # Keybindings
 # ----------------------------------------------------------------------
@@ -8,15 +8,6 @@ let
   fileManager = config.vars.hyprland.fileManager;
   launcher = config.vars.hyprland.launcher;
   lua = lib.mkLuaInline;
-
-  switchKeyboard = pkgs.writeShellScript "switch_keyboard_xwayland" ''
-    #!/bin/bash
-    if [ "$(setxkbmap -query | awk '/layout/{print $2}')" = "us" ]; then
-      setxkbmap fr
-    else
-      setxkbmap us
-    fi
-  '';
 
   # Workspaces 1 to 6 on the physical keys of the number row (code:10 = 1 key):
   # works on AZERTY (fr, be) and QWERTY (gb) without depending on the symbols.
@@ -54,6 +45,12 @@ in
         _args = [
           "SUPER + E"
           (lua ''hl.dsp.exec_cmd("${uwsm}${terminal} ${fileManager}")'')
+        ];
+      }
+      {
+        _args = [
+          "SUPER + B"
+          (lua ''hl.dsp.exec_cmd("${uwsm}brave")'')
         ];
       }
       {
@@ -108,12 +105,6 @@ in
 
       {
         _args = [
-          "ALT + twosuperior"
-          (lua ''hl.dsp.exec_cmd("${switchKeyboard}")'')
-        ];
-      }
-      {
-        _args = [
           "SUPER + V"
           (lua ''hl.dsp.exec_cmd("cliphist list | wofi --dmenu | cliphist decode | wl-copy")'')
         ];
@@ -148,7 +139,7 @@ in
       {
         _args = [
           "Print"
-          (lua ''hl.dsp.exec_cmd("hyprshot -d --freeze --clipboard-only -m region")'')
+          (lua ''hl.dsp.exec_cmd("${uwsm}flameshot gui")'')
         ];
       }
 

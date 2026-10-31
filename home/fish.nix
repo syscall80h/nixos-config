@@ -1,4 +1,4 @@
-{ flakeDir, hostname, ... }:
+{ flakeDir, host, ... }:
 {
   # Wraps `nix develop` / `nix shell` / `nix-shell` to keep fish
   programs.nix-your-shell = {
@@ -10,39 +10,29 @@
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
-      if not set -q IN_NIX_SHELL
-        fastfetch
-      end
+      fastfetch
     '';
     shellAliases = {
-      # NixOS: `#${hostname}` makes the alias independent of the machine's current name
-      rebuild = "sudo nixos-rebuild switch --flake ${flakeDir}#${hostname}";
+      # `#${host}` selects the configuration whatever the machine's name.
+      # --impure: silveros reads /etc/nixos/local.nix, outside the repo.
+      rebuild = "sudo nixos-rebuild switch --impure --flake ${flakeDir}#${host}";
       # Updates flake.lock (fixes) then rebuilds
-      update = "nix flake update --flake ${flakeDir} && sudo nixos-rebuild switch --flake ${flakeDir}#${hostname}";
+      update = "nix flake update --flake ${flakeDir} && sudo nixos-rebuild switch --impure --flake ${flakeDir}#${host}";
 
       # External tools
       lg = "lazygit";
+      cl = "claude";
       c = "bat";
       l = "eza -l";
-      ll = "eza -la --icons --hyperlink";
+      ll = "eza -la";
       lf = "lfcd";
       f = "fastfetch";
       b = "btop";
       p = "ps aux | rg -v '(ps aux|rg -)' | rg -i";
 
-      # Virtualization
-      vm = "virt-manager";
-      vls = "virsh list --all"; # all VMs and their state
-      vstart = "virsh start"; # vstart win11
-      vstop = "virsh shutdown"; # clean shutdown
-      vkill = "virsh destroy"; # hard power-off (does not delete the VM)
-      vip = "virsh domifaddr"; # VM IP address
-      vcon = "virsh console"; # serial console (Linux VMs), Ctrl+] to quit
-      vnet = "virsh net-list --all";
-      vsnap = "virsh snapshot-create-as"; # vsnap win11 clean
-      vsnaps = "virsh snapshot-list"; # vsnaps win11
-      vrevert = "virsh snapshot-revert"; # vrevert win11 clean
-      vdisks = "ls -lh /var/lib/libvirt/images";
+      # Openssl
+      openssl_chain = "openssl crl2pkcs7 -nocrl -certfile /dev/stdin | openssl pkcs7 -print_certs -text -noout"; # To be piped (ex: cat)
+      openssl_connect = "openssl s_client -showcerts -connect"; # ip:port
 
       # GNU tools
       d = "du -haxd1 . | sort -h";

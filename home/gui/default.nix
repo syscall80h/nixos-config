@@ -1,20 +1,20 @@
 { pkgs, ... }:
 let
-  # Image to put in the repo: wallpaper/unberry_ow.jpg (then git add).
+  # Image to put in the repo: wallpaper/dfir-wallpaper.png (then git add).
   # While it is missing, hyprpaper stays disabled instead of breaking the build.
-  wallpaper = ../wallpaper/dfir-wallpaper.png;
+  wallpaper = ../../wallpaper/dfir-wallpaper.png;
 in
 {
   imports = [
     ./easyeffects.nix
-    ./hyprland.nix
+    ./flameshot.nix
+    ./hyprland
     ./quickshell
     ./virt-manager.nix
   ];
 
   home.packages = with pkgs; [
     libnotify # notify-send
-    setxkbmap
     keepassxc
     chatterino7
     jellyfin-desktop

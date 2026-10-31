@@ -1,103 +1,105 @@
-# nixos-config
+# SilverOS
 
-shawn's NixOS flake configuration: a forensics workstation, with one WSL
-machine (no graphical interface) and one Hyprland machine (Intel).
+NixOS flake configuration for a forensics workstation. Two configurations:
+
+- `wsl`: NixOS under WSL, no graphical interface;
+- `silveros`: every physical machine (Hyprland), whatever its hardware.
 
 ## Architecture
 
 ```
 nixos-config/
-├── flake.nix                  # inputs (incl. lazyvim-nix) + mkHost: gui = (hostname != "wsl")
+├── flake.nix                  # inputs + mkHost: gui = (host != "wsl")
+├── install.sh                 # installs silveros from the NixOS ISO
 ├── hosts/
 │   ├── wsl/default.nix        # NixOS-WSL module, default user, UID 1001
-│   └── laptop/
-│       ├── default.nix        # boot, network, Intel GPU, bluetooth
-│       └── hardware-configuration.nix   # to be generated on the machine
+│   └── silveros/
+│       ├── default.nix        # boot, network, Intel GPU, bluetooth + /etc/nixos/local.nix
+│       └── disko.nix          # GPT, ESP, LUKS, btrfs subvolumes
 ├── modules/                   # SYSTEM (NixOS)
-│   ├── core/                  # nix, flakes, locale, nix-ld, user, updates, unfree
-│   ├── dev/python.nix         # python 3.14 + uv
-│   ├── virtualisation/docker.nix
+│   ├── core/                  # nix, locale, keyboard option, user, updates, unfree
+│   ├── dev/python.nix         # python + uv
+│   ├── virtualisation/        # docker.nix, libvirt.nix (KVM/QEMU + virt-manager, if gui)
 │   ├── forensics/
 │   │   ├── default.nix        # CLI tools (all machines)
 │   │   └── gui.nix            # autopsy, ghidra, graphical wireshark (if gui)
-│   └── desktop/               # Hyprland + UWSM, greetd, sound, fonts (if gui)
+│   └── desktop/               # Hyprland + UWSM, greetd, fonts (if gui)
 ├── home/                      # USER (home-manager)
 │   ├── theme.nix              # Catppuccin Mocha everywhere (the only place to choose the flavor)
 │   ├── fish.nix               # fish, aliases, oh-my-posh, fastfetch
 │   ├── lazyvim.nix            # LazyVim via lazyvim-nix → config in dotfiles/nvim
-│   ├── git.nix ssh.nix tmux.nix lf.nix btop.nix claude.nix packages.nix vars.nix
-│   └── gui/                   # Hyprland (Lua), hyprlock, quickshell, kitty, apps (if gui)
+│   ├── git.nix ssh.nix tmux.nix lf.nix yazi.nix btop.nix claude.nix packages.nix vars.nix
+│   └── gui/                   # Hyprland (generated Lua), hyprlock, quickshell, kitty,
+│                              # flameshot, virt-manager, apps (if gui)
 ├── pkgs/mftecmd.nix           # MFTECmd package (Eric Zimmerman)
 ├── shells/                    # nix develop .#rust  /  .#go
-├── wallpaper/                 # unberry_ow.jpg (to be added; without it, no hyprpaper)
+├── wallpaper/                 # dfir-wallpaper.png (hyprpaper)
 └── dotfiles/
     ├── nvim/                  # LazyVim config (copied by lazyvim-nix: rebuild after editing)
     ├── oh-my-posh/            # prompt (read directly, no rebuild)
     └── eza/theme.yml          # eza theme
 ```
 
-`gui` is computed in `flake.nix` from the hostname and passed to every
-module. When it is `false`, `modules/desktop`, `home/gui` and
-`modules/forensics/gui.nix` are simply not imported.
+`gui` is computed in `flake.nix` from the configuration name and passed to
+every module. When it is `false`, `modules/desktop`, `home/gui`,
+`modules/forensics/gui.nix` and libvirt are simply not imported.
 
 The repo must be in `~/nixos-config` (otherwise, change `flakeDir` in
 `flake.nix`). A flake only sees files tracked by git: remember to
 `git add` every new file.
 
-## Installation on WSL 
+### Per-machine settings: /etc/nixos/local.nix
+
+The repo contains nothing specific to one computer, so the whole team uses
+the same repo. Each silveros machine keeps its own settings in
+`/etc/nixos/`, outside git, written by `install.sh`:
+
+```nix
+# /etc/nixos/local.nix
+{
+  imports = [ ./hardware-configuration.nix ]; # generated with --no-filesystems
+  networking.hostName = "dell-shawn";
+  my.keyboard = "be"; # fr, be or gb
+  system.stateVersion = "26.05"; # NixOS version at install time: never change it
+}
+```
+
+Reading a file outside the repo requires `--impure`: the `rebuild` and
+`update` aliases and the automatic upgrade pass it.
+
+## Installation on WSL
 
 ```sh
-git clone <your repo> ~/nixos-config      # or copy the folder, then:
-cd ~/nixos-config && git init && git add -A
-
+git clone git@github.com:syscall80h/nixos-config.git ~/nixos-config
 sudo env NIX_CONFIG="experimental-features = nix-command flakes" \
   nixos-rebuild switch --flake ~/nixos-config#wsl
 ```
 
-1. The first build stops on MFTECmd with `hash mismatch … got: sha256-…`.
-   Copy that value into `pkgs/mftecmd.nix` in place of `lib.fakeHash`,
-   then run the command again.
-2. The hostname becomes `wsl`: from PowerShell, run `wsl --shutdown`, then
+1. The hostname becomes `wsl`: from PowerShell, run `wsl --shutdown`, then
    reopen the distribution.
-3. After that, `rebuild` is enough (the hostname picks the right config).
-4. Install the "JetBrainsMono Nerd Font" on the Windows side and select it
+2. After that, `rebuild` is enough.
+3. Install the "JetBrainsMono Nerd Font" on the Windows side and select it
    in Windows Terminal: on WSL, Windows is what renders the text.
 
-## Installation on the Hyprland machine (disko, btrfs, LUKS)
+## Installation on a physical machine (disko, btrfs, LUKS)
 
-From the NixOS ISO (minimal is enough), connected to the network, **as root**:
+From the NixOS ISO (minimal is enough), connected to the network:
 
 ```sh
-# 0. Enable flakes for this session (nixos-install needs them)
-export NIX_CONFIG="experimental-features = nix-command flakes"
-
-# 1. Get the repo (USB key, git clone…) into /tmp/nixos-config
+git clone https://github.com/syscall80h/nixos-config.git /tmp/nixos-config
 cd /tmp/nixos-config
-
-# 2. Identify the disk, then set it in hosts/laptop/disko.nix (device = …)
-lsblk
-
-# 3. Partition, encrypt, format and mount on /mnt — ERASES THE DISK.
-#    The LUKS password is asked here.
-nix --experimental-features "nix-command flakes" run github:nix-community/disko/latest -- \
-  --mode destroy,format,mount hosts/laptop/disko.nix
-
-# 4. Generate the hardware config WITHOUT filesystems (disko describes them)
-nixos-generate-config --no-filesystems --show-hardware-config --root /mnt \
-  > hosts/laptop/hardware-configuration.nix
-
-# 5. Install (git add -A first if the folder is a git repo)
-nixos-install --flake .#laptop
-
-# 6. Set shawn's password (the config defines none), then copy the repo
-nixos-enter --root /mnt -c 'passwd shawn'
-cp -r /tmp/nixos-config /mnt/home/shawn/nixos-config
-nixos-enter --root /mnt -c 'chown -R shawn:users /home/shawn/nixos-config'
+sudo ./install.sh          # or: sudo ./install.sh sda
 ```
 
-On reboot: LUKS password, then login in greetd.
+The script asks for the machine name and the keyboard layout (loaded right
+away, so the LUKS passphrase is typed with the right layout), then the disk
+to **erase**, with a confirmation. It partitions with disko, writes
+`/etc/nixos/local.nix` and `hardware-configuration.nix`, installs, asks for
+shawn's password and copies the repo to `~/nixos-config`.
 
-Disk layout (`hosts/laptop/disko.nix`):
+On reboot: LUKS passphrase, then login in greetd.
+
+Disk layout (`hosts/silveros/disko.nix`):
 
 | Subvolume | Mount | Options |
 |---|---|---|
@@ -111,6 +113,28 @@ Disk layout (`hosts/laptop/disko.nix`):
 On btrfs, `compress` applies to the whole filesystem: compression on `@vm`
 is turned off by the NOCOW attribute (`chattr +C`, set by a tmpfiles rule),
 not by a mount option.
+
+### Migrating an existing machine
+
+For a machine installed before `/etc/nixos/local.nix` existed (formerly the
+`laptop` configuration). The disk layout is unchanged, nothing is erased:
+
+```sh
+sudo mkdir -p /etc/nixos
+sudo nixos-generate-config --no-filesystems --show-hardware-config \
+  | sudo tee /etc/nixos/hardware-configuration.nix >/dev/null
+sudo tee /etc/nixos/local.nix >/dev/null <<'EOF'
+{
+  imports = [ ./hardware-configuration.nix ];
+  networking.hostName = "laptop";
+  my.keyboard = "fr";
+  system.stateVersion = "26.05";
+}
+EOF
+sudo nixos-rebuild switch --impure --flake ~/nixos-config#silveros
+```
+
+Then open a new terminal: `rebuild` now targets `silveros`.
 
 ## Day to day
 
@@ -129,28 +153,30 @@ The oh-my-posh prompt reads `dotfiles/oh-my-posh/` directly: a change
 applies to the next terminal. The Neovim config (`dotfiles/nvim/`) and
 Hyprland (`home/gui/hyprland/`) go through Nix: run `rebuild` after editing.
 
-## Hyprland shortcuts (SUPER = Windows key, AZERTY keyboard)
+## Hyprland shortcuts (SUPER = Windows key)
 
 | Key | Action |
 |---|---|
 | SUPER + Enter | terminal (kitty) |
 | SUPER + A | launcher (quickshell) |
 | SUPER + E | lf in kitty |
+| SUPER + B | Brave |
 | SUPER + R / K | close / kill the window |
 | SUPER + F | fullscreen |
-| SUPER + & é " ' ( - | workspace 1 to 6 |
-| SUPER + SHIFT + & é " ' ( - | move the window |
+| SUPER + keys 1 to 6 of the number row | workspace 1 to 6 (physical keys: same on AZERTY and QWERTY) |
+| SUPER + SHIFT + keys 1 to 6 | move the window |
 | SUPER + L | lock |
 | SUPER + F1 | lock and suspend |
 | SUPER + V | clipboard history (wofi) |
 | SUPER + G / Z | pavucontrol / bluetooth |
-| Print | screenshot of a region to the clipboard |
+| Print | screenshot (flameshot) |
 | SUPER + ! | quit (hyprshutdown) |
-| SUPER + Space | switch keyboard layout (fr/us) |
+| SUPER + Space | next keyboard layout (the machine's, then fr / be / gb) |
 
 ## Choices worth knowing
 
-- Locale `fr_FR.UTF-8`, keyboard `fr` (AZERTY), time zone `Europe/Paris`.
+- Locale `fr_FR.UTF-8`, time zone `Europe/Paris`; keyboard per machine
+  (`my.keyboard`, default `fr`), also used for the console and the LUKS prompt.
 - No automatic mounting of disks and USB keys: evidence media must never
   be mounted without an explicit action.
 - Unfree packages allowed one by one (`modules/core/default.nix`):

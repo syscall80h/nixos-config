@@ -1,11 +1,11 @@
 {
-    "$schema": "schema.json",
-    "palette": {
+  "$schema": "schema.json",
+  "palette": {
         "os": "#ACB0BE",
         "closer": "p:os",
         "pink": "#F5C2E7",
         "lavender": "#B4BEFE",
-        "blue": "#89B4FA",
+        "blue":  "#89B4FA",
         "mauve": "#5e548e",
         "periwinkle": "#c8b6ff",
         "vistablue": "#99A5FF",
@@ -14,85 +14,91 @@
         "aquamarine": "#00F5AB",
         "nix": "#7EBAE4",
         "red": "#F38BA8"
+  },
+  "blocks": [
+{
+  "type": "prompt",
+  "alignment": "left",
+  "segments": [
+    {
+      "foreground": "p:os",
+      "style": "plain",
+      "template": "{{.Icon}} ",
+      "type": "os"
     },
-    "blocks": [
-        {
-            "type": "prompt",
-            "alignment": "left",
-            "segments": [
-                {
-                    "foreground": "p:os",
-                    "style": "plain",
-                    "template": "{{.Icon}} ",
-                    "type": "os"
-                },
-                {
-                    "type": "python",
-                    "style": "plain",
-                    "foreground": "p:aquamarine",
-                    "template": " ({{ .Venv }}){{ .Full }} ",
-                    "properties": {
-                        "display_mode": "environment",
-                        "fetch_virtual_env": true,
-                        "home_enabled": true
-                    }
-                },
-                {
-                    "type": "nix-shell",
-                    "style": "plain",
-                    "foreground": "p:nix",
-                    "template": "nix-shell "
-                },
-                {
-                    "foreground": "p:blue",
-                    "style": "plain",
-                    "template": "<p:periwinkle>{{ .UserName }}</><p:vistablue>@{{ .HostName }} </>",
-                    "type": "session"
-                },
-                {
-                    "foreground": "p:lavande",
-                    "properties": {
-                        "folder_icon": "\ue5fe",
-                        "home_icon": "~",
-                        "style": "agnoster_full"
-                    },
-                    "style": "plain",
-                    "template": "\ue5fe {{ .Path }} ",
-                    "type": "path"
-                },
-                {
-                    "foreground": "p:green",
-                    "properties": {
-                        "branch_icon": "\ue725 ",
-                        "cherry_pick_icon": "\ue29b ",
-                        "commit_icon": "\uf417 ",
-                        "fetch_status": false,
-                        "fetch_upstream_icon": false,
-                        "merge_icon": "\ue727 ",
-                        "no_commits_icon": "\uf0c3 ",
-                        "rebase_icon": "\ue728 ",
-                        "revert_icon": "\uf0e2 ",
-                        "tag_icon": "\uf412 "
-                    },
-                    "template": "{{ .HEAD }} ",
-                    "style": "plain",
-                    "type": "git"
-                },
-                {
-                    "style": "plain",
-                    "foreground": "p:closer",
-                    "template": "",
-                    "type": "text"
-                },
-                {
-                    "type": "text",
-                    "style": "plain",
-                    "template": "\n\udb85\udfa9",
-                    "foreground": "p:periwinkle"
-                }
-            ]
-        }
-    ],
-    "final_space": true,
-    "version": 3
+    {
+      "type": "python",
+      "style": "plain",
+      "foreground": "p:aquamarine",
+      "template": " ({{ .Venv }}){{ .Full }} ",
+      "properties": {
+        "display_mode": "environment",
+        "fetch_virtual_env": true,
+        "home_enabled": true
+      }
+    },
+    {
+      "type": "nix-shell",
+      "style": "plain",
+      "foreground": "p:nix",
+      "template": "nix-shell "
+    },
+    {
+      "type": "root",
+      "style": "plain",
+      "foreground": "p:red",
+      "template": "{{ .UserName }}"
+    },
+    {
+      "foreground": "p:blue",
+      "style": "plain",
+      "template": "{{ if not .Root }}<p:periwinkle>{{ .UserName }}</>{{ end }}<p:vistablue>@{{ .HostName }} </>",
+      "type": "session"
+    },
+    {
+      "foreground": "p:lavande",
+      "properties": {
+        "folder_icon": "\ue5fe",
+        "home_icon": "~",
+        "style": "agnoster_full"
+      },
+      "style": "plain",
+      "template": "\ue5fe {{ .Path }} ",
+      "type": "path"
+    },
+    {
+      "foreground": "p:green",
+      "properties": {
+        "branch_icon": "\ue725 ",
+        "cherry_pick_icon": "\ue29b ",
+        "commit_icon": "\uf417 ",
+        "fetch_status": false,
+        "fetch_upstream_icon": false,
+        "merge_icon": "\ue727 ",
+        "no_commits_icon": "\uf0c3 ",
+        "rebase_icon": "\ue728 ",
+        "revert_icon": "\uf0e2 ",
+        "tag_icon": "\uf412 "
+      },
+      "template": "{{ .HEAD }} ",
+      "style": "plain",
+      "type": "git" 
+    },
+    {
+      "style": "plain",
+      "foreground": "p:closer",
+      "template": "",
+      "type": "text"
+    },
+    {
+      "type": "text",
+      "style": "plain",
+      "template": "\n\udb85\udfa9",
+      "foreground": "p:periwinkle"
+    }      
+  ]
+}
+],
+  "final_space": true,
+  "version": 3
 }

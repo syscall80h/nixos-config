@@ -1,5 +1,5 @@
 {
-  description = "shawn's NixOS — forensics workstation (WSL + Hyprland machine)";
+  description = "SilverOS — NixOS forensics workstation (WSL + Hyprland machines)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Declarative disk partitioning (hosts/laptop/disko.nix)
+    # Declarative disk partitioning (hosts/silveros/disko.nix)
     disko = {
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -48,15 +48,18 @@
       # and by the links to dotfiles/ (nvim, hyprland).
       flakeDir = "/home/${user}/nixos-config";
 
+      # `host` is the name of the configuration (wsl, silveros), not the
+      # machine's network name: on silveros each machine sets its own name
+      # in /etc/nixos/local.nix (see hosts/silveros/default.nix).
       mkHost =
-        hostname:
+        host:
         let
           # The requested rule: no graphical interface on WSL.
-          gui = hostname != "wsl";
+          gui = host != "wsl";
           args = {
             inherit
               inputs
-              hostname
+              host
               gui
               user
               flakeDir
@@ -66,7 +69,7 @@
         nixpkgs.lib.nixosSystem {
           specialArgs = args;
           modules = [
-            ./hosts/${hostname}
+            ./hosts/${host}
             ./modules
             catppuccin.nixosModules.catppuccin
             home-manager.nixosModules.home-manager
@@ -88,7 +91,8 @@
     {
       nixosConfigurations = {
         wsl = mkHost "wsl";
-        laptop = mkHost "laptop";
+        # Every physical machine (Hyprland), whatever its hardware
+        silveros = mkHost "silveros";
       };
 
       # nix develop ~/nixos-config#rust   /   nix develop ~/nixos-config#go

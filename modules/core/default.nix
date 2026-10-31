@@ -1,7 +1,7 @@
 {
   lib,
   pkgs,
-  hostname,
+  host,
   ...
 }:
 
@@ -12,7 +12,8 @@
     ./upgrade.nix
   ];
 
-  networking.hostName = hostname;
+  # Default name; on silveros, each machine overrides it in /etc/nixos/local.nix
+  networking.hostName = lib.mkDefault host;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
   # Unfree packages allowed one by one (everything else stays refused).
@@ -50,7 +51,7 @@
   programs.fish.enable = true;
 
   # Fallback tools, also available to root.
-  # vim stays here; shawn's default editor is nvim (home/nvim.nix).
+  # vim stays here; shawn's default editor is nvim (home/lazyvim.nix).
   environment.systemPackages = with pkgs; [
     vim
     git

@@ -7,6 +7,12 @@ return {
                 roslyn_ls = {
                     enabled = false,
                 },
+                -- `hl` is the global of the Hyprland Lua API (home/gui/hyprland)
+                lua_ls = {
+                    settings = {
+                        Lua = { diagnostics = { globals = { "hl" } } },
+                    },
+                },
             },
         },
     },

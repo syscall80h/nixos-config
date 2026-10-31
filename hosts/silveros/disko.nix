@@ -1,4 +1,4 @@
-# Disk of the laptop machine: GPT, ESP + LUKS, then btrfs with subvolumes.
+# Disk of every silveros machine: GPT, ESP + LUKS, then btrfs with subvolumes.
 # Used twice:
 #  - at install time, by the disko command (partitions, formats, mounts on /mnt);
 #  - afterwards, by NixOS, which derives fileSystems and the LUKS unlock from it.
@@ -16,7 +16,9 @@ in
 {
   disko.devices.disk.main = {
     type = "disk";
-    # Check with `lsblk` from the installer ISO (nvme0n1, sda…).
+    # Placeholder: install.sh runs disko on a copy with the disk you choose.
+    # Once installed, NixOS finds the partitions by label (disk-main-*), so
+    # this value does not have to match the machine. Do not rename "main".
     device = "/dev/nvme0n1";
     content = {
       type = "gpt";

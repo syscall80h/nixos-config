@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ inputs, host, pkgs, ... }:
 
 {
   # Security fixes: on NixOS they arrive through the stable branch
@@ -9,8 +9,11 @@
   # be interrupted. Kernel updates apply at the next manual reboot.
   system.autoUpgrade = {
     enable = true;
-    flake = inputs.self.outPath;
+    # Explicit `#host`: without it, nixos-rebuild looks for a configuration
+    # named after the machine, which does not exist on silveros machines.
+    flake = "${inputs.self.outPath}#${host}";
     flags = [
+      "--impure" # reads /etc/nixos/local.nix (hosts/silveros/default.nix)
       "--update-input"
       "nixpkgs"
       "--no-write-lock-file"

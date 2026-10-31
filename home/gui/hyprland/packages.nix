@@ -6,9 +6,7 @@
     pavucontrol
     cliphist
     wofi
-    hyprshot
     playerctl
     brightnessctl
-    hyprpolkitagent
   ];
 }

@@ -10,6 +10,6 @@
   # Hyprland and the whole graphical environment: only if gui = true
   ++ lib.optionals gui [
     ./desktop
-    ./virtualisation/libvirt.nix # not on WSL
+    ./virtualisation/libvirt.nix # VMs: needs KVM, so not on WSL
   ];
 }
