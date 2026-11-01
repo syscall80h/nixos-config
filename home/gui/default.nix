@@ -16,7 +16,7 @@ in
   home.packages = with pkgs; [
     libnotify # notify-send
     keepassxc
-    chatterino7
+    obsidian
     jellyfin-desktop
     (discord.override {
       commandLineArgs = "--ozone-platform=wayland --enable-features=UseOzonePlatform,WaylandWindowDecorations";

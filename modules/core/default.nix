@@ -23,6 +23,7 @@
       "volatility3"
       "claude-code" # home/claude.nix
       "discord" # home/gui (graphical machine)
+      "obsidian" # home/gui (graphical machine)
     ];
 
   nix = {
