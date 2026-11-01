@@ -55,7 +55,7 @@ in
       }
       {
         _args = [
-          "SUPER + A"
+          "SUPER + R"
           (lua ''hl.dsp.exec_cmd("${launcher}")'')
         ];
       }
@@ -67,7 +67,7 @@ in
       }
       {
         _args = [
-          "SUPER + R"
+          "SUPER + Q"
           (lua "hl.dsp.window.close()")
         ];
       }
@@ -135,14 +135,24 @@ in
         ];
       }
 
-
       {
         _args = [
           "Print"
-          (lua ''hl.dsp.exec_cmd("${uwsm}flameshot gui")'')
+          (lua ''hl.dsp.exec_cmd("${uwsm}screenshot region")'')
         ];
       }
-
+      {
+        _args = [
+          "SUPER + Print"
+          (lua ''hl.dsp.exec_cmd("${uwsm}screenshot window")'')
+        ];
+      }
+      {
+        _args = [
+          "SHIFT + Print"
+          (lua ''hl.dsp.exec_cmd("${uwsm}screenshot full")'')
+        ];
+      }
 
       {
         _args = [
@@ -268,6 +278,7 @@ in
           { locked = true; }
         ];
       }
-    ] ++ workspaceBinds;
+    ]
+    ++ workspaceBinds;
   };
 }

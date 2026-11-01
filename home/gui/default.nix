@@ -7,9 +7,9 @@ in
 {
   imports = [
     ./easyeffects.nix
-    ./flameshot.nix
     ./hyprland
     ./quickshell
+    ./screenshot.nix
     ./virt-manager.nix
   ];
 
@@ -63,6 +63,21 @@ in
       background_opacity = 0.4;
       confirm_os_window_close = 0;
       remember_window_size = false;
+
+      # Cursor trail: animates the terminal cursor, so it covers nvim without a
+      # plugin redrawing the buffer. No custom_shaders here on purpose — the
+      # cursor-trail-blaze/lightning shaders hardcode their colours and ignore
+      # cursor_trail_color, while the built-in trail honours it.
+      #
+      # The ms value is how long a cursor must sit still before it is eligible
+      # for a trail; 10 still filters nvim's intra-frame redraw churn but lets
+      # real navigation animate. A threshold of 1 makes every move animate, so
+      # there is no jarring mix of animated and instant jumps.
+      cursor_trail = 10;
+      cursor_trail_decay = "0.1 0.25";
+      cursor_trail_start_threshold = 1;
+      cursor_trail_color = "#89b4fa"; # Catppuccin Mocha blue, matches theme.nix accent
+      cursor_blink_interval = 0; # blinking fights the trail visually
     };
   };
 

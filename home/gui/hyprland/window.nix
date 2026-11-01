@@ -123,6 +123,13 @@
         float = true;
         workspace = "2";
       }
+      {
+        name = "satty";
+        match = {
+          class = "com.gabm.satty";
+        };
+        float = true;
+      }
     ];
   };
 }

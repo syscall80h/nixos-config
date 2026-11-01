@@ -26,7 +26,7 @@
     };
     fileManager = lib.mkOption {
       type = lib.types.str;
-      default = "lf";
+      default = "y";
     };
   };
 

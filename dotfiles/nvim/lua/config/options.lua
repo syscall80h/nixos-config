@@ -21,6 +21,10 @@ opt.cindent = true
 
 -- Visual settings
 opt.wrap = true
+-- LazyVim turns on hybrid numbering; keep the gutter showing absolute line
+-- numbers that do not shift as the cursor moves.
+opt.number = true
+opt.relativenumber = false
 
 -- LSP settings
 vim.g.lazyvim_python_lsp = "basedpyright"

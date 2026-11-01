@@ -10,7 +10,10 @@
     enable = true;
     interactiveShellInit = ''
       set -g fish_greeting
-      fastfetch
+      # fastfetch only in a normal terminal, not inside nix-shell / nix develop
+      if not set -q IN_NIX_SHELL
+        fastfetch
+      end
     '';
     shellAliases = {
       # `#${host}` selects the configuration whatever the machine's name.
