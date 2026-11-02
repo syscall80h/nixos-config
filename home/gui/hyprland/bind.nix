@@ -62,7 +62,7 @@ in
       {
         _args = [
           "SUPER + F"
-          (lua ''hl.dsp.window.fullscreen({ action = "toggle" })'')
+          (lua ''hl.dsp.window.fullscreen_state({ internal = 2, client = 1, action = "toggle" })'')
         ];
       }
       {
