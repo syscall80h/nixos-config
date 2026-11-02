@@ -39,6 +39,13 @@ in
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
+  # Suspend on lid close, whether on battery, on AC, or docked.
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchDocked = "suspend";
+  };
+
   users.users.${user}.extraGroups = [
     "networkmanager"
     "video"

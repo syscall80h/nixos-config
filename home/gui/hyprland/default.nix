@@ -6,6 +6,7 @@
     ./env.nix
     ./event.nix
     ./hyprlock.nix
+    ./idle.nix
     ./misc.nix
     ./packages.nix
     ./window.nix
