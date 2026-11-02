@@ -52,7 +52,6 @@ PanelWindow {
       anchors.centerIn: parent
       spacing: Theme.gap
 
-      Clock {}
       Workspaces { monitor: Hyprland.monitorFor(bar.modelData) }
     }
   }
@@ -73,5 +72,6 @@ PanelWindow {
       icon: Battery.charging ? "" : Battery.percent >= 90 ? "" : Battery.percent >= 65 ? "" : Battery.percent >= 40 ? "" : Battery.percent >= 15 ? "" : ""
       value: Battery.percent + "%"
     }
+    Clock {}
   }
 }
