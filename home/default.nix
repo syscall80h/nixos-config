@@ -7,7 +7,6 @@
     ./fish.nix
     ./tmux.nix
     ./yazi.nix
-    ./lf.nix
     ./lazyvim.nix
     ./git.nix
     ./vars.nix

@@ -63,6 +63,7 @@ in
       background_opacity = 0.4;
       confirm_os_window_close = 0;
       remember_window_size = false;
+      window_padding_width = 10;
 
       # Cursor trail: animates the terminal cursor, so it covers nvim without a
       # plugin redrawing the buffer. No custom_shaders here on purpose — the

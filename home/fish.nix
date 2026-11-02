@@ -22,13 +22,14 @@
       # Updates flake.lock (fixes) then rebuilds
       update = "nix flake update --flake ${flakeDir} && sudo nixos-rebuild switch --impure --flake ${flakeDir}#${host}";
 
+      erase = "sudo nix-collect-garbage -d
+  sudo nixos-rebuild switch --impure --flake ~/nixos-config#silveros";
       # External tools
       lg = "lazygit";
       cl = "claude";
       c = "bat";
       l = "eza -l";
-      ll = "eza -la";
-      lf = "lfcd";
+      ll = "eza -la --icons --hyperlink";
       f = "fastfetch";
       b = "btop";
       p = "ps aux | rg -v '(ps aux|rg -)' | rg -i";
@@ -45,14 +46,6 @@
       tarx = "tar -xf";
       lsof = "lsof +D"; # Recursive lookup
       df = "df -Th";
-    };
-    functions = {
-      lfcd = ''
-        # Terminal file manager (changing directory on exit)
-        # `command` is needed in case `lfcd` is aliased to `lf`.
-        # Quotes will cause `cd` to not change directory if `lf` prints nothing to stdout due to an error.
-        cd "$(command lf -print-last-dir $argv)"
-      '';
     };
     # Theme: catppuccin (home/theme.nix)
   };
