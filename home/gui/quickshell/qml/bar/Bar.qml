@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Io
 import qs.components
 import qs.services
 import qs.theme
@@ -63,9 +64,32 @@ PanelWindow {
     spacing: Theme.gap
 
     Tray { window: bar }
-    Stat { icon: ""; value: Stats.cpu + "%" }
-    Stat { icon: ""; value: Stats.mem + "%" }
-    NetworkSpeed {}
+    Stat { icon: ""
+      value: Stats.cpu + "%"
+      onClicked: cpuProc.running = true
+
+      Process {
+        id: cpuProc
+        command: ["uwsm", "app", "--", "kitty", "btop"]
+      }
+    }
+    Stat { icon: ""
+      value: Stats.mem + "%"
+      onClicked: memProc.running = true
+
+      Process {
+        id: memProc
+        command: ["uwsm", "app", "--", "kitty", "sh", "-c", "btop -c $HOME/.config/btop/mem.conf"]
+      }
+    }
+    NetworkSpeed {
+      onClicked: nmtuiProc.running = true
+
+      Process {
+        id: nmtuiProc
+        command: ["uwsm", "app", "--", "kitty", "nmtui"]
+      }
+    }
     Volume {}
     Stat {
       visible: Battery.present

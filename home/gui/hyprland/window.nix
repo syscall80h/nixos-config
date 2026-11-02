@@ -49,6 +49,20 @@
         immediate = true;
       }
       {
+        # Terminal isn't a game: keep blur when it's fullscreened, overriding tear_fullscreen above.
+        name = "kitty_fullscreen_blur";
+        match = {
+          class = "kitty";
+          fullscreen = true;
+        };
+        content = "none";
+        no_blur = false;
+        no_anim = false;
+        no_dim = false;
+        opaque = false;
+        immediate = false;
+      }
+      {
         name = "steam";
         match = {
           class = "steam";
