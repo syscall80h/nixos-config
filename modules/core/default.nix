@@ -42,7 +42,7 @@
   };
 
   time.timeZone = "Europe/Paris";
-  i18n.defaultLocale = "fr_FR.UTF-8";
+  i18n.defaultLocale = "en_US.UTF-8";
 
   # Allows running non-Nix binaries (wheels downloaded by uv/pip,
   # forensic tools distributed as binaries…).

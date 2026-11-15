@@ -17,13 +17,12 @@
     '';
     shellAliases = {
       # `#${host}` selects the configuration whatever the machine's name.
-      # --impure: silveros reads /etc/nixos/local.nix, outside the repo.
-      rebuild = "sudo nixos-rebuild switch --impure --flake ${flakeDir}#${host}";
+      rebuild = "sudo nixos-rebuild switch --flake ${flakeDir}#${host}";
       # Updates flake.lock (fixes) then rebuilds
-      update = "nix flake update --flake ${flakeDir} && sudo nixos-rebuild switch --impure --flake ${flakeDir}#${host}";
+      update = "nix flake update --flake ${flakeDir} && sudo nixos-rebuild switch --flake ${flakeDir}#${host}";
 
       erase = "sudo nix-collect-garbage -d
-  sudo nixos-rebuild switch --impure --flake ~/nixos-config#silveros";
+  sudo nixos-rebuild switch --flake ~/nixos-config#silveros";
       # External tools
       lg = "lazygit";
       cl = "claude";

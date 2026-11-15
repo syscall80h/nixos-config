@@ -4,6 +4,7 @@
   imports = [
     ./hyprland.nix
     ./fonts.nix
+    ./printing.nix
   ];
 
   # Catppuccin theme on the system side (TTY console, cursors…)

@@ -13,7 +13,6 @@
     # named after the machine, which does not exist on silveros machines.
     flake = "${inputs.self.outPath}#${host}";
     flags = [
-      "--impure" # reads /etc/nixos/local.nix (hosts/silveros/default.nix)
       "--update-input"
       "nixpkgs"
       "--no-write-lock-file"

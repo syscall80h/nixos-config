@@ -48,9 +48,8 @@
       # and by the links to dotfiles/ (nvim, hyprland).
       flakeDir = "/home/${user}/nixos-config";
 
-      # `host` is the name of the configuration (wsl, silveros), not the
-      # machine's network name: on silveros each machine sets its own name
-      # in /etc/nixos/local.nix (see hosts/silveros/default.nix).
+      # `host` is the name of the configuration (wsl, silveros), matching
+      # the hostname set in hosts/${host}/default.nix.
       mkHost =
         host:
         let
@@ -91,7 +90,6 @@
     {
       nixosConfigurations = {
         wsl = mkHost "wsl";
-        # Every physical machine (Hyprland), whatever its hardware
         silveros = mkHost "silveros";
       };
 

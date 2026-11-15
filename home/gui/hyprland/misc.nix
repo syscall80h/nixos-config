@@ -1,4 +1,4 @@
-{ lib, osConfig, ... }:
+{ ... }:
 {
   # ----------------------------------------------------------------------
   # Misc
@@ -6,8 +6,8 @@
   wayland.windowManager.hyprland.settings = {
     config = {
       input = {
-        # The machine's layout first, then the others (SUPER + Space cycles through them)
-        kb_layout = lib.concatStringsSep "," (lib.unique ([ osConfig.my.keyboard ] ++ [ "fr" "be" "gb" ]));
+        # SUPER + Space cycles through: Qwerty UK, azerty FR, azerty BE
+        kb_layout = "gb,fr,be";
         kb_variant = "";
         kb_model = "";
         kb_options = "grp:win_space_toggle";
